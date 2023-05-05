@@ -1,0 +1,160 @@
+MySQL Shell 8.0.32
+
+Copyright (c) 2016, 2023, Oracle and/or its affiliates.
+Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
+Other names may be trademarks of their respective owners.
+
+Type '\help' or '\?' for help; '\quit' to exit.
+ MySQL  JS > \sql
+Switching to SQL mode... Commands end with ;
+ MySQL  SQL > \connect --mc root@localhost
+Creating a Classic session to 'root@localhost'
+Please provide the password for 'root@localhost': *************
+Save password for 'root@localhost'? [Y]es/[N]o/Ne[v]er (default No): N
+Fetching global names for auto-completion... Press ^C to stop.
+Your MySQL connection id is 16
+Server version: 8.0.32 MySQL Community Server - GPL
+No default schema selected; type \use <schema> to set one.
+ MySQL  localhost:3306 ssl  SQL > show databases;
++--------------------+
+| Database           |
++--------------------+
+| agencia            |
+| asl_enar           |
+| ejemplo            |
+| ejemplotdcs        |
+| eva_2              |
+| evaluacion_1       |
+| information_schema |
+| mysql              |
+| ordenes_compra     |
+| performance_schema |
+| recursos_humanos   |
+| sakila             |
+| sys                |
+| tarjetas_credito   |
+| world              |
++--------------------+
+15 rows in set (0.0015 sec)
+ MySQL  localhost:3306 ssl  SQL > CREATE DATABASE Hospital;
+Query OK, 1 row affected (0.0505 sec)
+ MySQL  localhost:3306 ssl  SQL > \use Hospital
+Default schema set to `Hospital`.
+Fetching global names, object names from `hospital` for auto-completion... Press ^C to stop.
+  MySQL  localhost:3306 ssl  hospital  SQL > CREATE TABLE Pacientes(
+                                         -> paciente_id INT AUTO_INCREMENT KEY,
+                                         -> nombre varchar( 60) NOT NULL,
+                                         -> apellido_pat varchar( 60) NOT NULL,
+                                         -> apellido_mat varchar( 60) NOT NULL,
+                                         -> fecha_nacimiento date NOT NULL,
+                                         -> peso double NOT NULL,
+                                         -> altura double NOT NULL,
+                                         -> numero_seguro_social varchar( 20) NOT NULL,
+                                         -> genero ENUM( 'masculino', 'femenino') NOT NULL,
+                                         -> telefono_casa varchar( 12),
+                                         -> telefono_trabajo varchar( 12),
+                                         -> telefono_movil varchar( 12),
+                                         -> otros varchar( 60));
+Query OK, 0 rows affected (0.4762 sec)
+ MySQL  localhost:3306 ssl  hospital  SQL > CREATE TABLE Cuartos(
+                                         -> cuarto_id INT AUTO_INCREMENT KEY,
+                                         -> paciente_id INT NOT NULL,
+                                         -> numero_cuarto INT NOT NULL,
+                                         -> inicio_estadia datetime NOT NULL,
+                                         -> fin_estadia datetime,
+                                         -> FOREIGN KEY( paciente_id) REFERENCES Pacientes( paciente_id) ON DELETE RESTRICT ON UPDATE CASCADE);
+Query OK, 0 rows affected (0.2652 sec)
+ MySQL  localhost:3306 ssl  hospital  SQL > CREATE TABLE Direcciones(
+                                         -> direccion_id INT AUTO_INCREMENT KEY,
+                                         -> calle varchar( 80) NOT NULL,
+                                         -> numero_exterior INT NOT NULL,
+                                         -> numero_interior INT,
+                                         -> colonia varchar( 60) NOT NULL,
+                                         -> codigo_postal varchar( 7) NOT NULL,
+                                         -> ciudad varchar( 60) NOT NULL,
+                                         -> estado varchar( 60) NOT NULL,
+                                         -> país varchar( 60) NOT NULL,
+                                         -> otros varchar( 60));
+Query OK, 0 rows affected (0.1974 sec)
+ MySQL  localhost:3306 ssl  hospital  SQL > CREATE TABLE Direcciones_Pacientes(
+                                         -> direccion_paciente_id INT AUTO_INCREMENT KEY,
+                                         -> paciente_id INT NOT NULL,
+                                         -> direccion_id INT NOT NULL,
+                                         -> FOREIGN KEY( paciente_id) REFERENCES Pacientes( paciente_id) ON DELETE RESTRICT ON UPDATE CASCADE,
+                                         -> FOREIGN KEY( direccion_id) REFERENCES Direcciones( direccion_id) ON DELETE CASCADE ON UPDATE CASCADE);
+Query OK, 0 rows affected (0.1975 sec)
+ MySQL  localhost:3306 ssl  hospital  SQL > CREATE TABLE Empleados(
+                                         -> empleado_id INT AUTO_INCREMENT KEY,
+                                         -> nombre varchar( 60) NOT NULL,
+                                         -> apellido_pat varchar( 60) NOT NULL,
+                                         -> apellido_mat varchar( 60) NOT NULL,
+                                         -> titulo varchar( 60),
+                                         -> fecha_nacimiento date NOT NULL,
+                                         -> otros varchar( 60));
+Query OK, 0 rows affected (0.1282 sec)
+ MySQL  localhost:3306 ssl  hospital  SQL > CREATE TABLE Direcciones_Empleados(
+                                         -> direccion_empleado_id INT AUTO_INCREMENT KEY,
+                                         -> empleado_id INT NOT NULL,
+                                         -> direccion_id INT NOT NULL,
+                                         -> FOREIGN KEY( empleado_id) REFERENCES Empleados( empleado_id) ON DELETE RESTRICT ON UPDATE CASCADE,
+                                         -> FOREIGN KEY( direccion_id) REFERENCES Direcciones( direccion_id) ON DELETE CASCADE ON UPDATE CASCADE);
+Query OK, 0 rows affected (0.2244 sec)
+ MySQL  localhost:3306 ssl  hospital  SQL > CREATE TABLE Formas_Pago(
+                                         -> forma_pago_id INT AUTO_INCREMENT KEY,
+                                         -> forma_pago varchar( 60) NOT NULL);
+Query OK, 0 rows affected (0.2030 sec)
+ MySQL  localhost:3306 ssl  hospital  SQL > CREATE TABLE Formas_Pago_Pacientes(
+                                         -> forma_pago_pac_id INT AUTO_INCREMENT KEY,
+                                         -> paciente_id INT NOT NULL,
+                                         -> forma_pago_id INT NOT NULL,
+                                         -> detalles varchar( 60),
+                                         -> FOREIGN KEY( paciente_id) REFERENCES Pacientes( paciente_id) ON DELETE RESTRICT ON UPDATE CASCADE,
+                                         -> FOREIGN KEY( forma_pago_id) REFERENCES Formas_Pago( forma_pago_id) ON DELETE RESTRICT ON UPDATE CASCADE);
+Query OK, 0 rows affected (0.2468 sec)
+ MySQL  localhost:3306 ssl  hospital  SQL > CREATE TABLE Cuentas_Pacientes(
+                                         -> cuenta_paciente_id INT AUTO_INCREMENT KEY,
+                                         -> paciente_id INT NOT NULL,
+                                         -> forma_pago_pac_id INT,
+                                         -> fecha_emision datetime NOT NULL,
+                                         -> otros varchar( 40),
+                                         -> FOREIGN KEY( paciente_id) REFERENCES Pacientes( paciente_id) ON DELETE RESTRICT ON UPDATE CASCADE,
+                                         -> FOREIGN KEY( forma_pago_pac_id) REFERENCES Formas_Pago_Pacientes( forma_pago_pac_id) ON DELETE RESTRICT ON UPDATE CASCADE);
+Query OK, 0 rows affected (0.2249 sec)
+ MySQL  localhost:3306 ssl  hospital  SQL > CREATE TABLE Registro_Pacientes(
+                                         -> registro_paciente_id INT AUTO_INCREMENT KEY,
+                                         -> paciente_id INT NOT NULL,
+                                         -> cuenta_paciente_id INT NOT NULL,
+                                         -> registrado_por INT NOT NULL,
+                                         -> fecha_admision datetime NOT NULL,
+                                         -> condicion_medica varchar( 60) NOT NULL,
+                                         -> otros varchar( 60),
+                                         -> FOREIGN KEY( paciente_id) REFERENCES Pacientes( paciente_id) ON DELETE RESTRICT ON UPDATE CASCADE,
+                                         -> FOREIGN KEY( registrado_por) REFERENCES Empleados( empleado_id) ON DELETE RESTRICT ON UPDATE CASCADE,
+                                         -> FOREIGN KEY( cuenta_paciente_id) REFERENCES Cuentas_Pacientes( cuenta_paciente_id) ON DELETE RESTRICT ON UPDATE RESTRICT);
+Query OK, 0 rows affected (0.3237 sec)
+ MySQL  localhost:3306 ssl  hospital  SQL > CREATE TABLE Cuentas_Pacientes_Detalles(
+                                         -> cuenta_paciente_det_id INT AUTO_INCREMENT KEY,
+                                         -> cuenta_paciente_id INT NOT NULL,
+                                         -> detalle varchar( 80) NOT NULL DEFAULT 'Diagnóstico',
+                                         -> cantidad double NOT NULL,
+                                         -> costo_total double NOT NULL,
+                                         -> FOREIGN KEY( cuenta_paciente_id) REFERENCES Cuentas_Pacientes( cuenta_paciente_id) ON DELETE RESTRICT ON UPDATE CASCADE);
+Query OK, 0 rows affected (0.1047 sec)
+ MySQL  localhost:3306 ssl  hospital  SQL > show tables;
++----------------------------+
+| Tables_in_hospital         |
++----------------------------+
+| cuartos                    |
+| cuentas_pacientes          |
+| cuentas_pacientes_detalles |
+| direcciones                |
+| direcciones_empleados      |
+| direcciones_pacientes      |
+| empleados                  |
+| formas_pago                |
+| formas_pago_pacientes      |
+| pacientes                  |
+| registro_pacientes         |
++----------------------------+
+11 rows in set (0.1919 sec)
+ MySQL  localhost:3306 ssl  hospital  SQL >
