@@ -126,7 +126,7 @@ Query OK, 0 rows affected (0.2249 sec)
                                          -> cuenta_paciente_id INT NOT NULL,
                                          -> registrado_por INT NOT NULL,
                                          -> fecha_admision datetime NOT NULL,
-                                         -> condicion_medica varchar( 60) NOT NULL,
+                                         -> condicion_medica varchar( 120) NOT NULL,
                                          -> otros varchar( 60),
                                          -> FOREIGN KEY( paciente_id) REFERENCES Pacientes( paciente_id) ON DELETE RESTRICT ON UPDATE CASCADE,
                                          -> FOREIGN KEY( registrado_por) REFERENCES Empleados( empleado_id) ON DELETE RESTRICT ON UPDATE CASCADE,
