@@ -73,7 +73,7 @@ Query OK, 0 rows affected (0.2652 sec)
                                          -> codigo_postal varchar( 7) NOT NULL,
                                          -> ciudad varchar( 60) NOT NULL,
                                          -> estado varchar( 60) NOT NULL,
-                                         -> país varchar( 60) NOT NULL,
+                                         -> pais varchar( 60) NOT NULL,
                                          -> otros varchar( 60));
 Query OK, 0 rows affected (0.1974 sec)
  MySQL  localhost:3306 ssl  hospital  SQL > CREATE TABLE Direcciones_Pacientes(
